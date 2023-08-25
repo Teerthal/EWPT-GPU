@@ -24,8 +24,6 @@ It allows for an extension to multiple GPU and CPU-enabled simulation codes from
 2. Runge-Kutte Fehlberg (RKF45)
 3. Crank-Nicolson
 
-methods for time evolution.
-
 ###The GPU kernel programming uses 6th order finite differences to compute spatial derivatives but can be easily extended to nth order.
 
 ##Multi-GPU: There are multi-GPU enabled scripts that use Julia MPI functions and have custom routines to enable domain division, boundary communications between GPU devices, gathering global variables and outputs. 
