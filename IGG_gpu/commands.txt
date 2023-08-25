@@ -1,0 +1,25 @@
+#useful commands
+#Version and Modules needed to load julia right parallelstencil and implicit
+#global grid over multiple GPUS
+
+#MPIaware CUDA still not functional but could be made to work with the right 
+#MPI installation on cluster
+
+system julia module 
+module load julia/1.7.2
+
+standard startup run options recommended by parallel stencil
+julia --project --check-bounds=no -O3 main.jl
+
+export JULIA_CUDA_MEMORY_POOL=none
+export IGG_CUDAAWARE_MPI=1 (Need to look into having this functional)
+CUDA-aware mpi funcitonality test script
+https://juliaparallel.org/MPI.jl/stable/usage/#CUDA-aware-MPI-support
+
+before having MPI.jl run, need to loadmod which currently loads 
+/packages/7x/intel/2018.0/compilers_and_libraries_2018.0.128/linux/mpi/intel64/bin/mpirun
+perhaps need to use some other set of mpi distro to enable CUDA-aware MPI
+
+running multi gpu julia script
+mpirun -n 2 julia /home/tpatel28/EW_sim/main.jl
+##Needs absolute path##
