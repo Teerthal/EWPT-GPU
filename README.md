@@ -15,7 +15,7 @@ This, of course, depends on the number of CPU cores used and the GPU device. Thi
 ### This code is based on the convenient macros of the packages ImplicitGlobalGrid and ParallelStencil that divide the physical domain into multiple subdomains and initiate parallel computation. 
 This is an extremely useful and convenient approach to almost trivially parallelize the simulation and extend it to GPU devices. 
 It allows for an extension to multiple GPU and CPU-enabled simulation codes from a serial version with the use of very few macros.
-### Limitation: The packages currently only allow for central differences.
+### Limitation: The packages currently only allow for second-order central differences.
 
 # gpu_kernels
 
@@ -24,6 +24,6 @@ It allows for an extension to multiple GPU and CPU-enabled simulation codes from
 2. Runge-Kutte Fehlberg (RKF45)
 3. Crank-Nicolson
 
-###The GPU kernel programming uses 6th order finite differences to compute spatial derivatives but can be easily extended to nth order.
+###The GPU kernel programming uses 6th-order finite differences to compute spatial derivatives but can be easily extended to the nth order.
 
-##Multi-GPU: There are multi-GPU enabled scripts that use Julia MPI functions and have custom routines to enable domain division, boundary communications between GPU devices, gathering global variables and outputs. 
+##Multi-GPU: There are multi-GPU enabled scripts that use Julia MPI functions and have custom routines to enable domain division, boundary communications between GPU devices, and gathering global variables and outputs. 
