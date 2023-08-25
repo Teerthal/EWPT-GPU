@@ -12,14 +12,14 @@ The GPU-based code here has been compared to an efficient single and multi-CPU F
 This, of course, depends on the number of CPU cores used and the GPU device. This speedup was observed using 125 CPU cores of modern AMD architecture for the CPU version and Nvidia A100 80 Gb GPUs on the SOL cluster at Arizona State University.
 
 # IGG_gpu
-###This code is based on the convenient macros of the packages ImplicitGlobalGrid and ParallelStencil that divide the physical domain into multiple subdomains and initiate parallel computation. 
+### This code is based on the convenient macros of the packages ImplicitGlobalGrid and ParallelStencil that divide the physical domain into multiple subdomains and initiate parallel computation. 
 This is an extremely useful and convenient approach to almost trivially parallelize the simulation and extend it to GPU devices. 
 It allows for an extension to multiple GPU and CPU-enabled simulation codes from a serial version with the use of very few macros.
-###Limitation: The packages currently only allow for central differences.
+### Limitation: The packages currently only allow for central differences.
 
 # gpu_kernels
 
-###These are custom kernels programmed to simulate EWPT by solving the electroweak equations of motion using 
+### These are custom kernels programmed to simulate EWPT by solving the electroweak equations of motion using 
 1. Runge-Kutte 4th Order
 2. Runge-Kutte Fehlberg (RKF45)
 3. Crank-Nicolson
