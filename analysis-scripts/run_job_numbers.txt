@@ -1,0 +1,20 @@
+[tpatel28@login02:/scratch/tpatel28/EW_sim]$ bash launch.sh 0.0 20 60000 0.05 25.0 128 0.99 100 0.25
+No bubbles:  20
+/home/tpatel28/topo_mag/EW_sim
+Gamma:  0.0
+mkdir: cannot create directory ‘gamma-0.0-bubbles-20-nte-60000-dx-0.05-_dt-25.0-latx-128-gp2-0.99-nsnaps-100-T-0.25’: File exists
+Submitted batch job 14073317
+
+[tpatel28@login02:/scratch/tpatel28/EW_sim]$ bash launch.sh 0.1 20 60000 0.05 25.0 128 0.99 100 0.25
+No bubbles:  20
+/home/tpatel28/topo_mag/EW_sim
+Gamma:  0.1
+mkdir: cannot create directory ‘gamma-0.1-bubbles-20-nte-60000-dx-0.05-_dt-25.0-latx-128-gp2-0.99-nsnaps-100-T-0.25’: File exists
+Submitted batch job 14073318
+
+
+[tpatel28@login02:/scratch/tpatel28/EW_sim]$ bash launch.sh 0.01 100 10000 0.05 25.0 256 0.99 100 0.25
+No bubbles:  100
+/home/tpatel28/topo_mag/EW_sim
+Gamma:  0.01
+Submitted batch job 14073336
