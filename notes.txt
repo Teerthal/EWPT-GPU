@@ -1,0 +1,187 @@
+##############MASTER NOTES#########################
+
+#Notes#
+
+#02/11/24
+
+Large chunk of time taken for fft convolution
+Best to follow original approach to at least dump fft data
+for post processing rather than doing in live with GPU time
+
+
+Merged from kernels-rk4 Notes
+Actively devlopement version
+for rk-4 time + 4th order spatial differences version
+
+##2-24-24##
+Found errors in iterating f_n arrays: To save memory, k_f arrays were not
+being stored. 
+
+rk4steps were computed at successive steps with iterated f arrays which were
+updated with previous rk4step
+
+ERROR: The iterations to the f_n then should have been of the form 
+f_n = (dfdt+k_dfdt*dt/fac_1)*dt/fac_2 + f_n
+but it was
+f_n = (dfdt)*dt/fac_2 + f_n
+
+Resolution: The above is now fixed by updating all but the gauss aux arrays before
+a rk step
+Schematically 
+1-> rk4-step 1 -> udpate f_n and dfdt_n arrays
+2-> update f_n arrays (expect Gamma and Sigma) -> rk4-step-2 -> update remaining f_n and dfdt_ arrays
+3->.
+4->.
+
+###############################################################
+
+ERROR: factor in rk4-step 4 is different than in steps 2 and 3
+
+Resolution: fixed factor in trivial updates before rkstep4
+
+###############################################################
+
+ERROR: calling second order derivatives in rk4 steps is incorrect
+
+Resolution: fixed calls
+
+Pending: pbbly need to fix in CN expressions
+
+
+
+### 2-25-24 ###
+
+!!!! Errors in IGG scripts !!!
+
+ERROR: Missing halo updates for the recently added _t arrays
+
+Fist step = {Euler step}
+Intermediate steps = { Avg half step, Leapforward, Avg Half Step, Leapforward, Name change }
+
+Description of issue: Due to the above, teh _t _n arrays in intermediate steps were still at 'N-1' time step.
+
+Resolutions: 
+->Added Halo updates in new intermediate steps
+Intermediate steps = { 
+                        Avg half step, 
+                        Leapforward,
+                        !New!Halo update, 
+                        Avg Half Step,
+                        Leapforward, 
+                        !New!Halo update,
+                        Name change 
+                     }
+-> Changed @inn to @all in avg half step module since this is a trivial operation that
+    can be done locally without any need for halo updates
+
+ERROR:2-25-24
+
+Same error as above in halo updates for igg-rk4
+Resolution:-> In this case, the flux arrays need to halo updated
+            '!!before!!' every intermediate step.
+            This works since the 3 steps after the first one are fed
+            with live-updated fiedl arrays(see args with dt/2 steps)
+            Thus updating the place-holder/meta _k arrays after every 
+            rk-4 step would make every rk-4 step occur at the same time step
+
+
+ERROR:2-25-24
+
+Found typo in on of the field strength indexes in kernel codes for mag field comput
+
+Resolution: Corrected in both cn and rk 4 scripts
+
+
+!!!Pending!!!
+ERROR:2-25-24
+
+The meta updated arrays being passed [ cf. ϕ_1+dϕ_1_dt .*(dt/2.) ]
+are incorrect. 
+These are based of previous steps -> ok to do for rk-step 1
+but rk-step 2 flux compute should be passed [ ϕ_1 + (dϕ_1_dt+kt_ϕ_1 .*(dt/2.)) .*(dt/2.) ]
+Need to rectify or make change in flux compute function -> This would be smarter since the required arrays are already being passed to rk-step function
+
+RESOLUTION:2-26-24
+    Correted meta array being passed to flux functions
+    ->Erroneous results for now
+    ->All rk4 scripts (igg,ker,multi-ker) have been updated
+    ->test ongoing
+
+Pending resultion result:
+    -> seems to have worked
+
+
+TO do
+
+->compute min-phi
+->fix energies being plotted in ker codes
+-> couple of long runs
+-> couple of multi-gpu runs
+
+
+2-27-24
+
+To do
+
+Clean up ker-rk4 code (multi-version)
+
+    -> clean up derivatives module: no need to deal with ghost zones. can drop everythign except inner derivatives
+    -> check and finalize all auxiliary computing modules
+    -> check multi-node functionality: nominally, should be ok since it is based off mpi that worked in the igg version
+    -> check scaling : dt and dx
+    -> check damping
+    -> check fft dump routines:convultion can wait
+    -> check initializing routines (thermal)
+    -> check min-phi implementation
+
+
+
+#Bash scaling run parameters
+
+bash ker-rk4-scaling-prep.sh 0.0 5 5000 0.1 25.0 128 0.99 100
+
+
+2-29-24
+
+
+-> main_rk4 :
+    Now dumped all the useless dynamic variable declaraiton
+
+!!TO DO::Verify the replacement!!! easy to check since the replaced expressions should match 
+        in the sp-derivs, cov-derivs and fstrengths that are commented out  (Just check if left and rigth match)
+
+    DONE:verified -> need one more passover pbbly in final version
+
+-> dumped all the live additions because it was causing random slowdowns and kernels need to be recompiled every few steps
+    REMEDY: added _t arrays that store half updated fiedls to be passed to rk4
+
+    RESULT: Substantial performance increase
+
+->>>>Need to check: sometimes wildly short compute times : times to do 256^3 much shorter than 128^3???
+
+    -> seems to be that certain intervals to reset the kernel calls are necessary
+
+    _t arrays didn't do jack for speedip
+
+
+
+
+
+3-2-24
+
+main_rk4_multiple:launch version for big runs
+
+-> added flux arrays for all arrays.
+-> changed to using a single dummy array for all aux computes
+-> added optimization flags + changed mpi to intel-parallel-studio
+!!currently intel-parallel-studio is the only one that works in a stable manner for multi nodes!!
+!!but intel-parallel-studio is limited by numactl!!
+
+    module load intel/parallel-studio-2020.4
+    mpirun -n 64 -launcher slurm julia --project --check-bounds=no -O3 main_rk4_multiple.jl $1 $2 $3 $4 $5 $6 $7 $8 $9
+    module unload intel/parallel-studio-2020.4
+
+To solve:
+
+    openmpi/hpcx, mvapich backends for mpi -> non-functionality
+    mpich -> functional, but multi node runs were unstable
