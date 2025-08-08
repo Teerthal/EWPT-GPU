@@ -1,0 +1,47 @@
+Actively devlopement version
+for rk-4 time + 4th order spatial differences version
+
+##2-24-24##
+Found errors in iterating f_n arrays: To save memory, k_f arrays were not
+being stored. 
+
+rk4steps were computed at successive steps with iterated f arrays which were
+updated with previous rk4step
+
+ERROR: The iterations to the f_n then should have been of the form 
+f_n = (dfdt+k_dfdt*dt/fac_1)*dt/fac_2 + f_n
+but it was
+f_n = (dfdt)*dt/fac_2 + f_n
+
+Resolution: The above is now fixed by updating all but the gauss aux arrays before
+a rk step
+Schematically 
+1-> rk4-step 1 -> udpate f_n and dfdt_n arrays
+2-> update f_n arrays (expect Gamma and Sigma) -> rk4-step-2 -> update remaining f_n and dfdt_ arrays
+3->.
+4->.
+
+###############################################################
+
+ERROR: factor in rk4-step 4 is different than in steps 2 and 3
+
+Resolution: fixed factor in trivial updates before rkstep4
+
+###############################################################
+
+ERROR: calling second order derivatives in rk4 steps is incorrect
+
+Resolution: fixed calls
+
+Pending: pbbly need to fix in CN expressions
+
+
+
+
+3-2-24
+
+main_rk4_multiple:launch version for big runs
+
+-> added flux arrays for all arrays.
+-> changed to using a single dummy array for all aux computes
+-> 
