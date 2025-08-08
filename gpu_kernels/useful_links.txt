@@ -1,6 +1,0 @@
-https://juliaparallel.org/MPI.jl/stable/reference/library/
-https://docs.julialang.org/en/v1/manual/multi-threading/
-https://docs.juliahub.com/MPI/nO0XF/0.18.2/topology/
-
-https://pde-on-gpu.vaw.ethz.ch/lecture8/#julia_and_mpi
-https://github.com/eth-vaw-glaciology/course-101-0250-00/tree/main/scripts/l8_scripts
